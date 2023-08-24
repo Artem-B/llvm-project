@@ -1,8 +1,16 @@
 // Test target codegen - host bc file has to be created first.
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple x86_64-unknown-linux -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-host.bc
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown -aux-triple x86_64-unknown-linux -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm %s -fopenmp-is-target-device -fvisibility=protected -fopenmp-host-ir-file-path %t-host.bc -o - | FileCheck %s
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple powerpc64le-unknown-linux-gnu -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-host.bc
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown -aux-triple powerpc64le-unknown-linux-gnu -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm %s -fopenmp-is-target-device -fvisibility=protected -fopenmp-host-ir-file-path %t-host.bc -o - | FileCheck %s
+// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple x86_64-unknown-linux \
+// RUN:    -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-host-x86_64.bc
+// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown \
+// RUN:    -aux-triple x86_64-unknown-linux -fopenmp-targets=nvptx64-nvidia-cuda \
+// RUN:   -emit-llvm %s -fopenmp-is-target-device -fvisibility=protected \
+// RUN:   -fopenmp-host-ir-file-path %t-host-x86_64.bc -o - | FileCheck %s
+// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple powerpc64le-unknown-linux-gnu \
+// RUN:   -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-host-ppc64.bc
+// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown \
+// RUN:   -aux-triple powerpc64le-unknown-linux-gnu -fopenmp-targets=nvptx64-nvidia-cuda \
+// RUN:   -emit-llvm %s -fopenmp-is-target-device -fvisibility=protected \
+// RUN:   -fopenmp-host-ir-file-path %t-host-ppc64.bc -o - | FileCheck %s
 // expected-no-diagnostics
 
 // CHECK-DAG: [[T:%.+]] = type {{.+}}, {{fp128|ppc_fp128}},
@@ -69,4 +77,3 @@ void baz1() {
   T1 t = bar1();
 }
 #pragma omp end declare target
-

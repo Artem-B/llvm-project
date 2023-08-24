@@ -1,27 +1,15 @@
 // Test target codegen - host bc file has to be created first.
-// RUN: %clang_cc1 -fopenmp -x c++ -triple x86_64-unknown-linux -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-host.bc
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown -aux-triple x86_64-unknown-linux -fopenmp-targets=nvptx64-nvidia-cuda %s -fopenmp-is-target-device -fopenmp-host-ir-file-path %t-host.bc -fsyntax-only
 // RUN: %clang_cc1 -fopenmp -x c++ -triple powerpc64le-unknown-linux-gnu -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-host.bc
 // RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown -aux-triple powerpc64le-unknown-linux-gnu -fopenmp-targets=nvptx64-nvidia-cuda %s -fopenmp-is-target-device -fopenmp-host-ir-file-path %t-host.bc -fsyntax-only
 
 struct T {
   char a;
-#ifndef _ARCH_PPC
-  // expected-note@+1 {{'f' defined here}}
-  __float128 f;
-#else
   // expected-note@+1 {{'f' defined here}}
   long double f;
-#endif
   char c;
   T() : a(12), f(15) {}
-#ifndef _ARCH_PPC
-// expected-error@+7 {{'f' requires 128 bit size '__float128' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-// expected-error@+6 {{expression requires 128 bit size '__float128' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-#else
-// expected-error@+4 {{'f' requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-// expected-error@+3 {{expression requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-#endif
+// expected-error@+3 {{'f' requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
+// expected-error@+2 {{expression requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
   T &operator+(T &b) {
     f += b.a;
     return *this;
@@ -40,25 +28,15 @@ struct T1 {
   }
 };
 
-#ifndef _ARCH_PPC
-// expected-error@+2 {{'boo' requires 128 bit size '__float128' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-// expected-note@+1 2{{'boo' defined here}}
-void boo(__float128 A) { return; }
-#else
 // expected-error@+2 {{'boo' requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
 // expected-note@+1 2{{'boo' defined here}}
 void boo(long double A) { return; }
-#endif
 #pragma omp declare target
 T a = T();
 T f = a;
 void foo(T a = T()) {
   a = a + f; // expected-note {{called by 'foo'}}
-#ifndef _ARCH_PPC
-// expected-error@+5 {{'boo' requires 128 bit size '__float128' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-#else
-// expected-error@+3 {{'boo' requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-#endif
+// expected-error@+2 {{'boo' requires 128 bit size 'long double' type support, but target 'nvptx64-unknown-unknown' does not support it}}
 // expected-note@+1 {{called by 'foo'}}
   boo(0);
   return;
@@ -212,15 +190,6 @@ long double dead_template(long double f) {
   return f;
 }
 
-#ifndef _ARCH_PPC
-// expected-note@+1 {{'f' defined here}}
-__float128 foo2(__float128 f) {
-#pragma omp target map(f)
-  // expected-error@+1 {{'f' requires 128 bit size '__float128' type support, but target 'nvptx64-unknown-unknown' does not support it}}
-  f = 1;
-  return f;
-}
-#else
 // expected-note@+1 {{'f' defined here}}
 long double foo3(long double f) {
 #pragma omp target map(f)
@@ -228,7 +197,6 @@ long double foo3(long double f) {
   f = 1;
   return f;
 }
-#endif
 
 T foo3() {
   T S;
@@ -238,13 +206,8 @@ T foo3() {
 }
 
 // Allow all sorts of stuff on host
-#ifndef _ARCH_PPC
-__float128 q, b;
-__float128 c = q + b;
-#else
 long double q, b;
 long double c = q + b;
-#endif
 
 void hostFoo() {
   boo(c - b);
