@@ -154,8 +154,8 @@ static inline bool IsAMDOffloadArch(OffloadArch A) {
   return A >= OffloadArch::GFX600 && A < OffloadArch::Generic;
 }
 
-const char *OffloadArchToString(OffloadArch A);
-const char *OffloadArchToVirtualArchString(OffloadArch A);
+llvm::StringRef OffloadArchToString(OffloadArch A);
+llvm::StringRef OffloadArchToVirtualArchString(OffloadArch A);
 
 // The input should have the form "sm_20".
 OffloadArch StringToOffloadArch(llvm::StringRef S);

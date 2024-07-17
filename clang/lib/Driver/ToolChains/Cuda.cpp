@@ -550,8 +550,8 @@ void NVPTX::FatBinary::ConstructJob(Compilation &C, const JobAction &JA,
     auto *A = II.getAction();
     assert(A->getInputs().size() == 1 &&
            "Device offload action is expected to have a single input");
-    const char *gpu_arch_str = A->getOffloadingArch();
-    assert(gpu_arch_str &&
+    StringRef gpu_arch_str = A->getOffloadingArch();
+    assert(!gpu_arch_str.empty() &&
            "Device action expected to have associated a GPU architecture!");
     OffloadArch gpu_arch = StringToOffloadArch(gpu_arch_str);
 
@@ -560,9 +560,9 @@ void NVPTX::FatBinary::ConstructJob(Compilation &C, const JobAction &JA,
       continue;
     // We need to pass an Arch of the form "sm_XX" for cubin files and
     // "compute_XX" for ptx.
-    const char *Arch = (II.getType() == types::TY_PP_Asm)
-                           ? OffloadArchToVirtualArchString(gpu_arch)
-                           : gpu_arch_str;
+    StringRef Arch = (II.getType() == types::TY_PP_Asm)
+                         ? OffloadArchToVirtualArchString(gpu_arch)
+                         : gpu_arch_str;
     CmdArgs.push_back(
         Args.MakeArgString(llvm::Twine("--image=profile=") + Arch +
                            ",file=" + getToolChain().getInputFilename(II)));

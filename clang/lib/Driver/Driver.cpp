@@ -2365,7 +2365,7 @@ static unsigned PrintActions1(const Compilation &C, Action *A,
   } else if (OffloadAction *OA = dyn_cast<OffloadAction>(A)) {
     bool IsFirst = true;
     OA->doOnEachDependence(
-        [&](Action *A, const ToolChain *TC, const char *BoundArch) {
+        [&](Action *A, const ToolChain *TC, StringRef BoundArch) {
           assert(TC && "Unknown host toolchain");
           // E.g. for two CUDA device dependences whose bound arch is sm_20 and
           // sm_35 this will generate:
@@ -2377,7 +2377,7 @@ static unsigned PrintActions1(const Compilation &C, Action *A,
           os << A->getOffloadingKindPrefix();
           os << " (";
           os << TC->getTriple().normalize();
-          if (BoundArch)
+          if (!BoundArch.empty())
             os << ":" << BoundArch;
           os << ")";
           os << '"';
@@ -2408,7 +2408,7 @@ static unsigned PrintActions1(const Compilation &C, Action *A,
     auto S = A->getOffloadingKindPrefix();
     if (!S.empty()) {
       offload_os << ", (" << S;
-      if (A->getOffloadingArch())
+      if (!A->getOffloadingArch().empty())
         offload_os << ", " << A->getOffloadingArch();
       offload_os << ")";
     }
@@ -2947,11 +2947,10 @@ class OffloadingActionBuilder final {
     /// gfx906+xnack.
     struct TargetID {
       /// Target ID string which is persistent throughout the compilation.
-      const char *ID;
+      StringRef ID;
       TargetID(OffloadArch Arch) { ID = OffloadArchToString(Arch); }
       TargetID(const char *ID) : ID(ID) {}
-      operator const char *() { return ID; }
-      operator StringRef() { return StringRef(ID); }
+      operator StringRef() { return ID; }
     };
     /// List of GPU architectures to use in this compilation.
     SmallVector<TargetID, 4> GpuArchList;
@@ -3351,7 +3350,7 @@ class OffloadingActionBuilder final {
               C.MakeAction<LinkJobAction>(DeviceActions, types::TY_CUDA_FATBIN);
 
           if (!CompileDeviceOnly) {
-            DA.add(*CudaFatBinary, *ToolChains.front(), /*BoundArch=*/nullptr,
+            DA.add(*CudaFatBinary, *ToolChains.front(), /*BoundArch=*/{},
                    Action::OFK_Cuda);
             // Clear the fat binary, it is already a dependence to an host
             // action.
@@ -3539,7 +3538,7 @@ class OffloadingActionBuilder final {
                                                       types::TY_HIP_FATBIN);
 
           if (!CompileDeviceOnly) {
-            DA.add(*CudaFatBinary, *ToolChains.front(), /*BoundArch=*/nullptr,
+            DA.add(*CudaFatBinary, *ToolChains.front(), /*BoundArch=*/{},
                    AssociatedOffloadKind);
             // Clear the fat binary, it is already a dependence to an host
             // action.
@@ -3642,7 +3641,7 @@ class OffloadingActionBuilder final {
         auto *TopDeviceLinkAction = C.MakeAction<LinkJobAction>(
             Actions,
             CompileDeviceOnly ? types::TY_HIP_FATBIN : types::TY_Object);
-        DDeps.add(*TopDeviceLinkAction, *ToolChains[0], nullptr,
+        DDeps.add(*TopDeviceLinkAction, *ToolChains[0], {},
                   AssociatedOffloadKind);
         // Offload the host object to the host linker.
         AL.push_back(
@@ -3775,7 +3774,7 @@ public:
     // for that.
     OffloadAction::HostDependence HDep(
         *HostAction, *C.getSingleOffloadToolChain<Action::OFK_Host>(),
-        /*BoundArch=*/nullptr, DDeps);
+        /*BoundArch=*/{}, DDeps);
     return C.MakeAction<OffloadAction>(HDep, DDeps);
   }
 
@@ -3875,7 +3874,7 @@ public:
     // associated with the current input.
     if (HostAction)
       HostAction->propagateHostOffloadInfo(InputArgToOffloadKindMap[InputArg],
-                                           /*BoundArch=*/nullptr);
+                                           /*BoundArch=*/{});
     return false;
   }
 
@@ -3904,7 +3903,7 @@ public:
       // needs to set its offloading kind directly.
       if (HA)
         HA->propagateHostOffloadInfo(SB->getAssociatedOffloadKind(),
-                                     /*BoundArch=*/nullptr);
+                                     /*BoundArch=*/{});
     }
     return HA;
   }
@@ -3935,7 +3934,7 @@ public:
       // is a link action it is assumed to depend on all actions generated so
       // far.
       HostAction->setHostOffloadInfo(ActiveOffloadKinds,
-                                     /*BoundArch=*/nullptr);
+                                     /*BoundArch=*/{});
       // Propagate active offloading kinds for each input to the link action.
       // Each input may have different active offloading kind.
       for (auto *A : HostAction->inputs()) {
@@ -3945,7 +3944,7 @@ public:
         auto OFKLoc = InputArgToOffloadKindMap.find(ArgLoc->second);
         if (OFKLoc == InputArgToOffloadKindMap.end())
           continue;
-        A->propagateHostOffloadInfo(OFKLoc->second, /*BoundArch=*/nullptr);
+        A->propagateHostOffloadInfo(OFKLoc->second, /*BoundArch=*/{});
       }
       return HostAction;
     }
@@ -3955,7 +3954,7 @@ public:
     // to do that explicitly here.
     OffloadAction::HostDependence HDep(
         *HostAction, *C.getSingleOffloadToolChain<Action::OFK_Host>(),
-        /*BoundArch*/ nullptr, ActiveOffloadKinds);
+        /*BoundArch*/ {}, ActiveOffloadKinds);
     return C.MakeAction<OffloadAction>(HDep, DDeps);
   }
 };
@@ -4254,7 +4253,7 @@ void Driver::BuildActions(Compilation &C, DerivedArgList &Args,
       OffloadBuilder->appendTopLevelActions(Actions, Current, InputArg);
     else if (Current)
       Current->propagateHostOffloadInfo(C.getActiveOffloadKinds(),
-                                        /*BoundArch=*/nullptr);
+                                        /*BoundArch=*/{});
   }
 
   // Add a link action if necessary.
@@ -4278,7 +4277,7 @@ void Driver::BuildActions(Compilation &C, DerivedArgList &Args,
                Args.hasArg(options::OPT_offload_link)) {
       LA = C.MakeAction<LinkerWrapperJobAction>(LinkerInputs, types::TY_Image);
       LA->propagateHostOffloadInfo(C.getActiveOffloadKinds(),
-                                   /*BoundArch=*/nullptr);
+                                   /*BoundArch=*/{});
     } else {
       LA = C.MakeAction<LinkJobAction>(LinkerInputs, types::TY_Image);
     }
@@ -4703,7 +4702,7 @@ Action *Driver::BuildOffloadingActions(Compilation &C,
     Action *FatbinAction =
         C.MakeAction<LinkJobAction>(OffloadActions, types::TY_CUDA_FATBIN);
     DDep.add(*FatbinAction, *C.getSingleOffloadToolChain<Action::OFK_Cuda>(),
-             nullptr, Action::OFK_Cuda);
+             {}, Action::OFK_Cuda);
   } else if (C.isOffloadingHostKind(Action::OFK_HIP) &&
              !Args.hasFlag(options::OPT_fgpu_rdc, options::OPT_fno_gpu_rdc,
                            false)) {
@@ -4711,15 +4710,15 @@ Action *Driver::BuildOffloadingActions(Compilation &C,
     // translation unit, linking each input individually.
     Action *FatbinAction =
         C.MakeAction<LinkJobAction>(OffloadActions, types::TY_HIP_FATBIN);
-    DDep.add(*FatbinAction, *C.getSingleOffloadToolChain<Action::OFK_HIP>(),
-             nullptr, Action::OFK_HIP);
+    DDep.add(*FatbinAction, *C.getSingleOffloadToolChain<Action::OFK_HIP>(), {},
+             Action::OFK_HIP);
   } else {
     // Package all the offloading actions into a single output that can be
     // embedded in the host and linked.
     Action *PackagerAction =
         C.MakeAction<OffloadPackagerJobAction>(OffloadActions, types::TY_Image);
     DDep.add(*PackagerAction, *C.getSingleOffloadToolChain<Action::OFK_Host>(),
-             nullptr, C.getActiveOffloadKinds());
+             {}, C.getActiveOffloadKinds());
   }
 
   // HIP wants '--offload-device-only' to create a fatbinary by default.
@@ -4733,7 +4732,7 @@ Action *Driver::BuildOffloadingActions(Compilation &C,
   }) && isa<CompileJobAction>(HostAction);
   OffloadAction::HostDependence HDep(
       *HostAction, *C.getSingleOffloadToolChain<Action::OFK_Host>(),
-      /*BoundArch=*/nullptr, SingleDeviceOutput ? DDep : DDeps);
+      /*BoundArch=*/{}, SingleDeviceOutput ? DDep : DDeps);
   return C.MakeAction<OffloadAction>(HDep, SingleDeviceOutput ? DDep : DDeps);
 }
 
@@ -5511,9 +5510,9 @@ InputInfoList Driver::BuildJobsForActionNoCache(
     if (OA->hasSingleDeviceDependence() || !OA->hasHostDependence()) {
       InputInfoList DevA;
       OA->doOnEachDeviceDependence([&](Action *DepA, const ToolChain *DepTC,
-                                       const char *DepBoundArch) {
+                                       StringRef DepBoundArch) {
         DevA.append(BuildJobsForAction(C, DepA, DepTC, DepBoundArch, AtTopLevel,
-                                       /*MultipleArchs*/ !!DepBoundArch,
+                                       /*MultipleArchs*/ !DepBoundArch.empty(),
                                        LinkingOutput, CachedResults,
                                        DepA->getOffloadingDeviceKind()));
       });
@@ -5526,10 +5525,10 @@ InputInfoList Driver::BuildJobsForActionNoCache(
     // dependence. The dependences can't therefore be a top-level action.
     OA->doOnEachDependence(
         /*IsHostDependence=*/BuildingForOffloadDevice,
-        [&](Action *DepA, const ToolChain *DepTC, const char *DepBoundArch) {
+        [&](Action *DepA, const ToolChain *DepTC, StringRef DepBoundArch) {
           OffloadDependencesInputInfo.append(BuildJobsForAction(
               C, DepA, DepTC, DepBoundArch, /*AtTopLevel=*/false,
-              /*MultipleArchs*/ !!DepBoundArch, LinkingOutput, CachedResults,
+              /*MultipleArchs*/ !DepBoundArch.empty(), LinkingOutput, CachedResults,
               DepA->getOffloadingDeviceKind()));
         });
 
@@ -5595,10 +5594,10 @@ InputInfoList Driver::BuildJobsForActionNoCache(
   for (const auto *OA : CollapsedOffloadActions)
     cast<OffloadAction>(OA)->doOnEachDependence(
         /*IsHostDependence=*/BuildingForOffloadDevice,
-        [&](Action *DepA, const ToolChain *DepTC, const char *DepBoundArch) {
+        [&](Action *DepA, const ToolChain *DepTC, StringRef DepBoundArch) {
           OffloadDependencesInputInfo.append(BuildJobsForAction(
               C, DepA, DepTC, DepBoundArch, /* AtTopLevel */ false,
-              /*MultipleArchs=*/!!DepBoundArch, LinkingOutput, CachedResults,
+              /*MultipleArchs=*/!DepBoundArch.empty(), LinkingOutput, CachedResults,
               DepA->getOffloadingDeviceKind()));
         });
 

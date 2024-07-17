@@ -15,6 +15,7 @@
 #include "clang/Basic/Builtins.h"
 #include "clang/Basic/MacroBuilder.h"
 #include "clang/Basic/TargetBuiltins.h"
+#include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/StringSwitch.h"
 
 using namespace clang;
@@ -180,7 +181,7 @@ void NVPTXTargetInfo::getTargetDefines(const LangOptions &Opts,
 
   if (Opts.CUDAIsDevice || Opts.OpenMPIsTargetDevice || !HostTarget) {
     // Set __CUDA_ARCH__ for the GPU specified.
-    std::string CUDAArchCode = [this] {
+    std::string CUDAArchCode = [&] () -> std::string {
       switch (GPU) {
       case OffloadArch::GFX600:
       case OffloadArch::GFX601:

@@ -55,7 +55,7 @@ const char *Action::getClassName(ActionClass AC) {
   llvm_unreachable("invalid class");
 }
 
-void Action::propagateDeviceOffloadInfo(OffloadKind OKind, const char *OArch,
+void Action::propagateDeviceOffloadInfo(OffloadKind OKind, StringRef OArch,
                                         const ToolChain *OToolChain) {
   // Offload action set its own kinds on their dependences.
   if (Kind == OffloadClass)
@@ -75,7 +75,7 @@ void Action::propagateDeviceOffloadInfo(OffloadKind OKind, const char *OArch,
     A->propagateDeviceOffloadInfo(OffloadingDeviceKind, OArch, OToolChain);
 }
 
-void Action::propagateHostOffloadInfo(unsigned OKinds, const char *OArch) {
+void Action::propagateHostOffloadInfo(unsigned OKinds, StringRef OArch) {
   // Offload action set its own kinds on their dependences.
   if (Kind == OffloadClass)
     return;
@@ -304,7 +304,7 @@ OffloadAction::getSingleDeviceDependence(bool DoNotConsiderHostActions) const {
 }
 
 void OffloadAction::DeviceDependences::add(Action &A, const ToolChain &TC,
-                                           const char *BoundArch,
+                                           StringRef BoundArch,
                                            OffloadKind OKind) {
   DeviceActions.push_back(&A);
   DeviceToolChains.push_back(&TC);
@@ -313,7 +313,7 @@ void OffloadAction::DeviceDependences::add(Action &A, const ToolChain &TC,
 }
 
 void OffloadAction::DeviceDependences::add(Action &A, const ToolChain &TC,
-                                           const char *BoundArch,
+                                           StringRef BoundArch,
                                            unsigned OffloadKindMask) {
   DeviceActions.push_back(&A);
   DeviceToolChains.push_back(&TC);
@@ -326,7 +326,7 @@ void OffloadAction::DeviceDependences::add(Action &A, const ToolChain &TC,
 }
 
 OffloadAction::HostDependence::HostDependence(Action &A, const ToolChain &TC,
-                                              const char *BoundArch,
+                                              StringRef BoundArch,
                                               const DeviceDependences &DDeps)
     : HostAction(A), HostToolChain(TC), HostBoundArch(BoundArch) {
   for (auto K : DDeps.getOffloadKinds())

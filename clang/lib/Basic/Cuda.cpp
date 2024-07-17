@@ -154,7 +154,7 @@ static const OffloadArchToStringMap arch_names[] = {
 #undef SM2
 #undef GFX
 
-const char *OffloadArchToString(OffloadArch A) {
+llvm::StringRef OffloadArchToString(OffloadArch A) {
   auto result = std::find_if(
       std::begin(arch_names), std::end(arch_names),
       [A](const OffloadArchToStringMap &map) { return A == map.arch; });
@@ -163,7 +163,7 @@ const char *OffloadArchToString(OffloadArch A) {
   return result->arch_name;
 }
 
-const char *OffloadArchToVirtualArchString(OffloadArch A) {
+llvm::StringRef OffloadArchToVirtualArchString(OffloadArch A) {
   auto result = std::find_if(
       std::begin(arch_names), std::end(arch_names),
       [A](const OffloadArchToStringMap &map) { return A == map.arch; });

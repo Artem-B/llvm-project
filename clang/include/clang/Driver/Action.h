@@ -126,7 +126,7 @@ protected:
   OffloadKind OffloadingDeviceKind = OFK_None;
 
   /// The Offloading architecture associated with this action.
-  const char *OffloadingArch = nullptr;
+  StringRef OffloadingArch;
 
   /// The Offloading toolchain associated with this device action.
   const ToolChain *OffloadingToolChain = nullptr;
@@ -187,14 +187,14 @@ public:
 
   /// Set the device offload info of this action and propagate it to its
   /// dependences.
-  void propagateDeviceOffloadInfo(OffloadKind OKind, const char *OArch,
+  void propagateDeviceOffloadInfo(OffloadKind OKind, StringRef OArch,
                                   const ToolChain *OToolChain);
 
   /// Append the host offload info of this action and propagate it to its
   /// dependences.
-  void propagateHostOffloadInfo(unsigned OKinds, const char *OArch);
+  void propagateHostOffloadInfo(unsigned OKinds, StringRef OArch);
 
-  void setHostOffloadInfo(unsigned OKinds, const char *OArch) {
+  void setHostOffloadInfo(unsigned OKinds, StringRef OArch) {
     ActiveOffloadKindMask |= OKinds;
     OffloadingArch = OArch;
   }
@@ -208,7 +208,7 @@ public:
   }
 
   OffloadKind getOffloadingDeviceKind() const { return OffloadingDeviceKind; }
-  const char *getOffloadingArch() const { return OffloadingArch; }
+  StringRef getOffloadingArch() const { return OffloadingArch; }
   const ToolChain *getOffloadingToolChain() const {
     return OffloadingToolChain;
   }
@@ -274,7 +274,7 @@ public:
   class DeviceDependences final {
   public:
     using ToolChainList = SmallVector<const ToolChain *, 3>;
-    using BoundArchList = SmallVector<const char *, 3>;
+    using BoundArchList = SmallVector<StringRef, 3>;
     using OffloadKindList = SmallVector<OffloadKind, 3>;
 
   private:
@@ -298,12 +298,12 @@ public:
   public:
     /// Add an action along with the associated toolchain, bound arch, and
     /// offload kind.
-    void add(Action &A, const ToolChain &TC, const char *BoundArch,
+    void add(Action &A, const ToolChain &TC, StringRef BoundArch,
              OffloadKind OKind);
 
     /// Add an action along with the associated toolchain, bound arch, and
     /// offload kinds.
-    void add(Action &A, const ToolChain &TC, const char *BoundArch,
+    void add(Action &A, const ToolChain &TC, StringRef BoundArch,
              unsigned OffloadKindMask);
 
     /// Get each of the individual arrays.
@@ -325,29 +325,29 @@ public:
     const ToolChain &HostToolChain;
 
     /// The architectures that should be used with this action.
-    const char *HostBoundArch = nullptr;
+    StringRef HostBoundArch;
 
     /// The offload kind of each dependence.
     unsigned HostOffloadKinds = 0u;
 
   public:
-    HostDependence(Action &A, const ToolChain &TC, const char *BoundArch,
+    HostDependence(Action &A, const ToolChain &TC, StringRef BoundArch,
                    const unsigned OffloadKinds)
         : HostAction(A), HostToolChain(TC), HostBoundArch(BoundArch),
           HostOffloadKinds(OffloadKinds) {}
 
     /// Constructor version that obtains the offload kinds from the device
     /// dependencies.
-    HostDependence(Action &A, const ToolChain &TC, const char *BoundArch,
+    HostDependence(Action &A, const ToolChain &TC, StringRef BoundArch,
                    const DeviceDependences &DDeps);
     Action *getAction() const { return &HostAction; }
     const ToolChain *getToolChain() const { return &HostToolChain; }
-    const char *getBoundArch() const { return HostBoundArch; }
+    StringRef getBoundArch() const { return HostBoundArch; }
     unsigned getOffloadKinds() const { return HostOffloadKinds; }
   };
 
   using OffloadActionWorkTy =
-      llvm::function_ref<void(Action *, const ToolChain *, const char *)>;
+      llvm::function_ref<void(Action *, const ToolChain *, StringRef)>;
 
 private:
   /// The host offloading toolchain that should be used with the action.
