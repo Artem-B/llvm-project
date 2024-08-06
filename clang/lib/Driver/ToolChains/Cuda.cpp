@@ -757,9 +757,9 @@ NVPTXToolChain::TranslateArgs(const llvm::opt::DerivedArgList &Args,
   return DAL;
 }
 
-void NVPTXToolChain::addClangTargetOptions(
-    const llvm::opt::ArgList &DriverArgs, llvm::opt::ArgStringList &CC1Args,
-    Action::OffloadKind DeviceOffloadingKind) const {
+void NVPTXToolChain::addClangTargetOptions(const llvm::opt::ArgList &DriverArgs,
+                                           llvm::opt::ArgStringList &CC1Args,
+                                           const JobAction &JA) const {
   // If we are compiling with a standalone NVPTX toolchain we want to try to
   // mimic a standard environment as much as possible. So we enable lowering
   // ctor / dtor functions to global symbols that can be registered.
@@ -828,12 +828,13 @@ CudaToolChain::CudaToolChain(const Driver &D, const llvm::Triple &Triple,
                              const ToolChain &HostTC, const ArgList &Args)
     : NVPTXToolChain(D, Triple, HostTC.getTriple(), Args), HostTC(HostTC) {}
 
-void CudaToolChain::addClangTargetOptions(
-    const llvm::opt::ArgList &DriverArgs, llvm::opt::ArgStringList &CC1Args,
-    Action::OffloadKind DeviceOffloadingKind) const {
-  HostTC.addClangTargetOptions(DriverArgs, CC1Args, DeviceOffloadingKind);
+void CudaToolChain::addClangTargetOptions(const llvm::opt::ArgList &DriverArgs,
+                                          llvm::opt::ArgStringList &CC1Args,
+                                          const JobAction &JA) const {
+  HostTC.addClangTargetOptions(DriverArgs, CC1Args, JA);
 
   StringRef GpuArch = DriverArgs.getLastArgValue(options::OPT_march_EQ);
+  auto DeviceOffloadingKind = JA.getOffloadingDeviceKind();
   assert(!GpuArch.empty() && "Must have an explicit GPU arch.");
   assert((DeviceOffloadingKind == Action::OFK_OpenMP ||
           DeviceOffloadingKind == Action::OFK_Cuda) &&
