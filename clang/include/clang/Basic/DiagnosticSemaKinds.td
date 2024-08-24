@@ -3317,6 +3317,8 @@ def err_attribute_only_once_per_parameter : Error<
   "%0 attribute can only be applied once per parameter">;
 def err_mismatched_uuid : Error<"uuid does not match previous declaration">;
 def note_previous_uuid : Note<"previous uuid specified here">;
+def err_attribute_const_arg_only : Error<
+  "%0 attribute only applies to a const-qualified function parameter">;
 def warn_attribute_pointers_only : Warning<
   "%0 attribute only applies to%select{| constant}1 pointer arguments">,
   InGroup<IgnoredAttributes>;
