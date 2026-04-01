@@ -1,5 +1,7 @@
 // REQUIRES: nvptx-registered-target
-// RUN: %clangxx -O1 -S --cuda-device-only --offload-arch=sm_32 -nocudalib -nocudainc %s -o - | FileCheck %s
+// RUN: %clangxx -O1 -S --cuda-device-only --offload-arch=sm_32 -nocudalib -nocudainc -target x86_64-unknown-linux-gnu %s -o - | FileCheck %s --check-prefixes=CHECK,LINUX
+// RUN: %clangxx -O1 -S --cuda-device-only --offload-arch=sm_32 -nocudalib -nocudainc -target x86_64-pc-windows-msvc %s -o - | FileCheck %s --check-prefixes=CHECK,WINDOWS
+
 
 #define __device__ __attribute__((device))
 #define warpSize 32
@@ -32,9 +34,11 @@ __device__ void test_loads_cg(void *ptr) {
   __ldcg(((const char *)ptr) + 0);
   // CHECK: ld.global.cg.s32
   __ldcg(((const int *)ptr) + 1);
-  // CHECK: ld.global.cg.s64
+  // LINUX: ld.global.cg.s64
+  // WINDOWS: ld.global.cg.s32
   __ldcg(((const long *)ptr) + 2);
-  // CHECK: ld.global.cg.u64
+  // LINUX: ld.global.cg.u64
+  // WINDOWS: ld.global.cg.u32
   __ldcg(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.cg.s64
   __ldcg(((const long long *)ptr) + 4);
@@ -83,9 +87,11 @@ __device__ void test_loads_cv(void *ptr) {
   volatile char v_0 = __ldcv(((const char *)ptr) + 0);
   // CHECK: ld.global.cv.s32
   volatile int v_1 = __ldcv(((const int *)ptr) + 1);
-  // CHECK: ld.global.cv.s64
+  // LINUX: ld.global.cv.s64
+  // WINDOWS: ld.global.cv.s32
   volatile long v_2 = __ldcv(((const long *)ptr) + 2);
-  // CHECK: ld.global.cv.u64
+  // LINUX: ld.global.cv.u64
+  // WINDOWS: ld.global.cv.u32
   volatile unsigned long v_3 = __ldcv(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.cv.s64
   volatile long long v_4 = __ldcv(((const long long *)ptr) + 4);
@@ -134,9 +140,11 @@ __device__ void test_loads_cs(void *ptr) {
   __ldcs(((const char *)ptr) + 0);
   // CHECK: ld.global.cs.s32
   __ldcs(((const int *)ptr) + 1);
-  // CHECK: ld.global.cs.s64
+  // LINUX: ld.global.cs.s64
+  // WINDOWS: ld.global.cs.s32
   __ldcs(((const long *)ptr) + 2);
-  // CHECK: ld.global.cs.u64
+  // LINUX: ld.global.cs.u64
+  // WINDOWS: ld.global.cs.u32
   __ldcs(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.cs.s64
   __ldcs(((const long long *)ptr) + 4);
@@ -185,9 +193,11 @@ __device__ void test_loads_ca(void *ptr) {
   __ldca(((const char *)ptr) + 0);
   // CHECK: ld.global.ca.s32
   __ldca(((const int *)ptr) + 1);
-  // CHECK: ld.global.ca.s64
+  // LINUX: ld.global.ca.s64
+  // WINDOWS: ld.global.ca.s32
   __ldca(((const long *)ptr) + 2);
-  // CHECK: ld.global.ca.u64
+  // LINUX: ld.global.ca.u64
+  // WINDOWS: ld.global.ca.u32
   __ldca(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.ca.s64
   __ldca(((const long long *)ptr) + 4);
@@ -236,9 +246,11 @@ __device__ void test_loads_lu(void *ptr) {
   volatile char v_0 = __ldlu(((const char *)ptr) + 0);
   // CHECK: ld.global.lu.s32
   volatile int v_1 = __ldlu(((const int *)ptr) + 1);
-  // CHECK: ld.global.lu.s64
+  // LINUX: ld.global.lu.s64
+  // WINDOWS: ld.global.lu.s32
   volatile long v_2 = __ldlu(((const long *)ptr) + 2);
-  // CHECK: ld.global.lu.u64
+  // LINUX: ld.global.lu.u64
+  // WINDOWS: ld.global.lu.u32
   volatile unsigned long v_3 = __ldlu(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.lu.s64
   volatile long long v_4 = __ldlu(((const long long *)ptr) + 4);
@@ -287,9 +299,11 @@ __device__ void test_stores_wt(void *ptr, int val) {
   __stwt(((char *)ptr) + 0, (char)val);
   // CHECK: st.global.wt.s32
   __stwt(((int *)ptr) + 1, (int)val);
-  // CHECK: st.global.wt.s64
+  // LINUX: st.global.wt.s64
+  // WINDOWS: st.global.wt.s32
   __stwt(((long *)ptr) + 2, (long)val);
-  // CHECK: st.global.wt.u64
+  // LINUX: st.global.wt.u64
+  // WINDOWS: st.global.wt.u32
   __stwt(((unsigned long *)ptr) + 3, (unsigned long)val);
   // CHECK: st.global.wt.s64
   __stwt(((long long *)ptr) + 4, (long long)val);
@@ -338,9 +352,11 @@ __device__ void test_stores_wb(void *ptr, int val) {
   __stwb(((char *)ptr) + 0, (char)val);
   // CHECK: st.global.wb.s32
   __stwb(((int *)ptr) + 1, (int)val);
-  // CHECK: st.global.wb.s64
+  // LINUX: st.global.wb.s64
+  // WINDOWS: st.global.wb.s32
   __stwb(((long *)ptr) + 2, (long)val);
-  // CHECK: st.global.wb.u64
+  // LINUX: st.global.wb.u64
+  // WINDOWS: st.global.wb.u32
   __stwb(((unsigned long *)ptr) + 3, (unsigned long)val);
   // CHECK: st.global.wb.s64
   __stwb(((long long *)ptr) + 4, (long long)val);
@@ -389,9 +405,11 @@ __device__ void test_stores_cg(void *ptr, int val) {
   __stcg(((char *)ptr) + 0, (char)val);
   // CHECK: st.global.cg.s32
   __stcg(((int *)ptr) + 1, (int)val);
-  // CHECK: st.global.cg.s64
+  // LINUX: st.global.cg.s64
+  // WINDOWS: st.global.cg.s32
   __stcg(((long *)ptr) + 2, (long)val);
-  // CHECK: st.global.cg.u64
+  // LINUX: st.global.cg.u64
+  // WINDOWS: st.global.cg.u32
   __stcg(((unsigned long *)ptr) + 3, (unsigned long)val);
   // CHECK: st.global.cg.s64
   __stcg(((long long *)ptr) + 4, (long long)val);
@@ -440,9 +458,11 @@ __device__ void test_stores_cs(void *ptr, int val) {
   __stcs(((char *)ptr) + 0, (char)val);
   // CHECK: st.global.cs.s32
   __stcs(((int *)ptr) + 1, (int)val);
-  // CHECK: st.global.cs.s64
+  // LINUX: st.global.cs.s64
+  // WINDOWS: st.global.cs.s32
   __stcs(((long *)ptr) + 2, (long)val);
-  // CHECK: st.global.cs.u64
+  // LINUX: st.global.cs.u64
+  // WINDOWS: st.global.cs.u32
   __stcs(((unsigned long *)ptr) + 3, (unsigned long)val);
   // CHECK: st.global.cs.s64
   __stcs(((long long *)ptr) + 4, (long long)val);
