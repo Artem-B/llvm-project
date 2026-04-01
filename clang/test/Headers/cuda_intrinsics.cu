@@ -1,5 +1,5 @@
 // REQUIRES: nvptx-registered-target
-// RUN: %clang++ -O1 -S --cuda-device-only --offload-arch=sm_32 -nocudalib -nocudainc %s -o - | FileCheck %s
+// RUN: %clangxx -O1 -S --cuda-device-only --offload-arch=sm_32 -nocudalib -nocudainc %s -o - | FileCheck %s
 
 #define __device__ __attribute__((device))
 #define warpSize 32
