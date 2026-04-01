@@ -28,53 +28,53 @@ struct double2 { double x, y; };
 __device__ void test_loads_cg(void *ptr) {
   // CHECK-LABEL: .func _Z13test_loads_cgPv
   // CHECK: ld.global.cg.s8
-  volatile char v_0 = __ldcg(((const char *)ptr) + 0);
+  __ldcg(((const char *)ptr) + 0);
   // CHECK: ld.global.cg.s32
-  volatile int v_1 = __ldcg(((const int *)ptr) + 1);
+  __ldcg(((const int *)ptr) + 1);
   // CHECK: ld.global.cg.s64
-  volatile long v_2 = __ldcg(((const long *)ptr) + 2);
+  __ldcg(((const long *)ptr) + 2);
   // CHECK: ld.global.cg.u64
-  volatile unsigned long v_3 = __ldcg(((const unsigned long *)ptr) + 3);
+  __ldcg(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.cg.s64
-  volatile long long v_4 = __ldcg(((const long long *)ptr) + 4);
+  __ldcg(((const long long *)ptr) + 4);
   // CHECK: ld.global.cg.f32
-  volatile float v_5 = __ldcg(((const float *)ptr) + 5);
+  __ldcg(((const float *)ptr) + 5);
   // CHECK: ld.global.cg.f64
-  volatile double v_6 = __ldcg(((const double *)ptr) + 6);
+  __ldcg(((const double *)ptr) + 6);
   // CHECK: ld.global.cg.v2.s8
-  volatile char2 v_7 = __ldcg(((const char2 *)ptr) + 7);
+  __ldcg(((const char2 *)ptr) + 7);
   // CHECK: ld.global.cg.v4.s8
-  volatile char4 v_8 = __ldcg(((const char4 *)ptr) + 8);
+  __ldcg(((const char4 *)ptr) + 8);
   // CHECK: ld.global.cg.v2.s16
-  volatile short2 v_9 = __ldcg(((const short2 *)ptr) + 9);
+  __ldcg(((const short2 *)ptr) + 9);
   // CHECK: ld.global.cg.v4.s16
-  volatile short4 v_10 = __ldcg(((const short4 *)ptr) + 10);
+  __ldcg(((const short4 *)ptr) + 10);
   // CHECK: ld.global.cg.v2.s32
-  volatile int2 v_11 = __ldcg(((const int2 *)ptr) + 11);
+  __ldcg(((const int2 *)ptr) + 11);
   // CHECK: ld.global.cg.v4.s32
-  volatile int4 v_12 = __ldcg(((const int4 *)ptr) + 12);
+  __ldcg(((const int4 *)ptr) + 12);
   // CHECK: ld.global.cg.v2.s64
-  volatile longlong2 v_13 = __ldcg(((const longlong2 *)ptr) + 13);
+  __ldcg(((const longlong2 *)ptr) + 13);
   // CHECK: ld.global.cg.v2.u8
-  volatile uchar2 v_14 = __ldcg(((const uchar2 *)ptr) + 14);
+  __ldcg(((const uchar2 *)ptr) + 14);
   // CHECK: ld.global.cg.v4.u8
-  volatile uchar4 v_15 = __ldcg(((const uchar4 *)ptr) + 15);
+  __ldcg(((const uchar4 *)ptr) + 15);
   // CHECK: ld.global.cg.v2.u16
-  volatile ushort2 v_16 = __ldcg(((const ushort2 *)ptr) + 16);
+  __ldcg(((const ushort2 *)ptr) + 16);
   // CHECK: ld.global.cg.v4.u16
-  volatile ushort4 v_17 = __ldcg(((const ushort4 *)ptr) + 17);
+  __ldcg(((const ushort4 *)ptr) + 17);
   // CHECK: ld.global.cg.v2.u32
-  volatile uint2 v_18 = __ldcg(((const uint2 *)ptr) + 18);
+  __ldcg(((const uint2 *)ptr) + 18);
   // CHECK: ld.global.cg.v4.u32
-  volatile uint4 v_19 = __ldcg(((const uint4 *)ptr) + 19);
+  __ldcg(((const uint4 *)ptr) + 19);
   // CHECK: ld.global.cg.v2.u64
-  volatile ulonglong2 v_20 = __ldcg(((const ulonglong2 *)ptr) + 20);
+  __ldcg(((const ulonglong2 *)ptr) + 20);
   // CHECK: ld.global.cg.v2.f32
-  volatile float2 v_21 = __ldcg(((const float2 *)ptr) + 21);
+  __ldcg(((const float2 *)ptr) + 21);
   // CHECK: ld.global.cg.v4.f32
-  volatile float4 v_22 = __ldcg(((const float4 *)ptr) + 22);
+  __ldcg(((const float4 *)ptr) + 22);
   // CHECK: ld.global.cg.v2.f64
-  volatile double2 v_23 = __ldcg(((const double2 *)ptr) + 23);
+  __ldcg(((const double2 *)ptr) + 23);
 }
 __device__ void test_loads_cv(void *ptr) {
   // CHECK-LABEL: .func _Z13test_loads_cvPv
@@ -130,104 +130,104 @@ __device__ void test_loads_cv(void *ptr) {
 __device__ void test_loads_cs(void *ptr) {
   // CHECK-LABEL: .func _Z13test_loads_csPv
   // CHECK: ld.global.cs.s8
-  volatile char v_0 = __ldcs(((const char *)ptr) + 0);
+  __ldcs(((const char *)ptr) + 0);
   // CHECK: ld.global.cs.s32
-  volatile int v_1 = __ldcs(((const int *)ptr) + 1);
+  __ldcs(((const int *)ptr) + 1);
   // CHECK: ld.global.cs.s64
-  volatile long v_2 = __ldcs(((const long *)ptr) + 2);
+  __ldcs(((const long *)ptr) + 2);
   // CHECK: ld.global.cs.u64
-  volatile unsigned long v_3 = __ldcs(((const unsigned long *)ptr) + 3);
+  __ldcs(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.cs.s64
-  volatile long long v_4 = __ldcs(((const long long *)ptr) + 4);
+  __ldcs(((const long long *)ptr) + 4);
   // CHECK: ld.global.cs.f32
-  volatile float v_5 = __ldcs(((const float *)ptr) + 5);
+  __ldcs(((const float *)ptr) + 5);
   // CHECK: ld.global.cs.f64
-  volatile double v_6 = __ldcs(((const double *)ptr) + 6);
+  __ldcs(((const double *)ptr) + 6);
   // CHECK: ld.global.cs.v2.s8
-  volatile char2 v_7 = __ldcs(((const char2 *)ptr) + 7);
+  __ldcs(((const char2 *)ptr) + 7);
   // CHECK: ld.global.cs.v4.s8
-  volatile char4 v_8 = __ldcs(((const char4 *)ptr) + 8);
+  __ldcs(((const char4 *)ptr) + 8);
   // CHECK: ld.global.cs.v2.s16
-  volatile short2 v_9 = __ldcs(((const short2 *)ptr) + 9);
+  __ldcs(((const short2 *)ptr) + 9);
   // CHECK: ld.global.cs.v4.s16
-  volatile short4 v_10 = __ldcs(((const short4 *)ptr) + 10);
+  __ldcs(((const short4 *)ptr) + 10);
   // CHECK: ld.global.cs.v2.s32
-  volatile int2 v_11 = __ldcs(((const int2 *)ptr) + 11);
+  __ldcs(((const int2 *)ptr) + 11);
   // CHECK: ld.global.cs.v4.s32
-  volatile int4 v_12 = __ldcs(((const int4 *)ptr) + 12);
+  __ldcs(((const int4 *)ptr) + 12);
   // CHECK: ld.global.cs.v2.s64
-  volatile longlong2 v_13 = __ldcs(((const longlong2 *)ptr) + 13);
+  __ldcs(((const longlong2 *)ptr) + 13);
   // CHECK: ld.global.cs.v2.u8
-  volatile uchar2 v_14 = __ldcs(((const uchar2 *)ptr) + 14);
+  __ldcs(((const uchar2 *)ptr) + 14);
   // CHECK: ld.global.cs.v4.u8
-  volatile uchar4 v_15 = __ldcs(((const uchar4 *)ptr) + 15);
+  __ldcs(((const uchar4 *)ptr) + 15);
   // CHECK: ld.global.cs.v2.u16
-  volatile ushort2 v_16 = __ldcs(((const ushort2 *)ptr) + 16);
+  __ldcs(((const ushort2 *)ptr) + 16);
   // CHECK: ld.global.cs.v4.u16
-  volatile ushort4 v_17 = __ldcs(((const ushort4 *)ptr) + 17);
+  __ldcs(((const ushort4 *)ptr) + 17);
   // CHECK: ld.global.cs.v2.u32
-  volatile uint2 v_18 = __ldcs(((const uint2 *)ptr) + 18);
+  __ldcs(((const uint2 *)ptr) + 18);
   // CHECK: ld.global.cs.v4.u32
-  volatile uint4 v_19 = __ldcs(((const uint4 *)ptr) + 19);
+  __ldcs(((const uint4 *)ptr) + 19);
   // CHECK: ld.global.cs.v2.u64
-  volatile ulonglong2 v_20 = __ldcs(((const ulonglong2 *)ptr) + 20);
+  __ldcs(((const ulonglong2 *)ptr) + 20);
   // CHECK: ld.global.cs.v2.f32
-  volatile float2 v_21 = __ldcs(((const float2 *)ptr) + 21);
+  __ldcs(((const float2 *)ptr) + 21);
   // CHECK: ld.global.cs.v4.f32
-  volatile float4 v_22 = __ldcs(((const float4 *)ptr) + 22);
+  __ldcs(((const float4 *)ptr) + 22);
   // CHECK: ld.global.cs.v2.f64
-  volatile double2 v_23 = __ldcs(((const double2 *)ptr) + 23);
+  __ldcs(((const double2 *)ptr) + 23);
 }
 __device__ void test_loads_ca(void *ptr) {
   // CHECK-LABEL: .func _Z13test_loads_caPv
   // CHECK: ld.global.ca.s8
-  volatile char v_0 = __ldca(((const char *)ptr) + 0);
+  __ldca(((const char *)ptr) + 0);
   // CHECK: ld.global.ca.s32
-  volatile int v_1 = __ldca(((const int *)ptr) + 1);
+  __ldca(((const int *)ptr) + 1);
   // CHECK: ld.global.ca.s64
-  volatile long v_2 = __ldca(((const long *)ptr) + 2);
+  __ldca(((const long *)ptr) + 2);
   // CHECK: ld.global.ca.u64
-  volatile unsigned long v_3 = __ldca(((const unsigned long *)ptr) + 3);
+  __ldca(((const unsigned long *)ptr) + 3);
   // CHECK: ld.global.ca.s64
-  volatile long long v_4 = __ldca(((const long long *)ptr) + 4);
+  __ldca(((const long long *)ptr) + 4);
   // CHECK: ld.global.ca.f32
-  volatile float v_5 = __ldca(((const float *)ptr) + 5);
+  __ldca(((const float *)ptr) + 5);
   // CHECK: ld.global.ca.f64
-  volatile double v_6 = __ldca(((const double *)ptr) + 6);
+  __ldca(((const double *)ptr) + 6);
   // CHECK: ld.global.ca.v2.s8
-  volatile char2 v_7 = __ldca(((const char2 *)ptr) + 7);
+  __ldca(((const char2 *)ptr) + 7);
   // CHECK: ld.global.ca.v4.s8
-  volatile char4 v_8 = __ldca(((const char4 *)ptr) + 8);
+  __ldca(((const char4 *)ptr) + 8);
   // CHECK: ld.global.ca.v2.s16
-  volatile short2 v_9 = __ldca(((const short2 *)ptr) + 9);
+  __ldca(((const short2 *)ptr) + 9);
   // CHECK: ld.global.ca.v4.s16
-  volatile short4 v_10 = __ldca(((const short4 *)ptr) + 10);
+  __ldca(((const short4 *)ptr) + 10);
   // CHECK: ld.global.ca.v2.s32
-  volatile int2 v_11 = __ldca(((const int2 *)ptr) + 11);
+  __ldca(((const int2 *)ptr) + 11);
   // CHECK: ld.global.ca.v4.s32
-  volatile int4 v_12 = __ldca(((const int4 *)ptr) + 12);
+  __ldca(((const int4 *)ptr) + 12);
   // CHECK: ld.global.ca.v2.s64
-  volatile longlong2 v_13 = __ldca(((const longlong2 *)ptr) + 13);
+  __ldca(((const longlong2 *)ptr) + 13);
   // CHECK: ld.global.ca.v2.u8
-  volatile uchar2 v_14 = __ldca(((const uchar2 *)ptr) + 14);
+  __ldca(((const uchar2 *)ptr) + 14);
   // CHECK: ld.global.ca.v4.u8
-  volatile uchar4 v_15 = __ldca(((const uchar4 *)ptr) + 15);
+  __ldca(((const uchar4 *)ptr) + 15);
   // CHECK: ld.global.ca.v2.u16
-  volatile ushort2 v_16 = __ldca(((const ushort2 *)ptr) + 16);
+  __ldca(((const ushort2 *)ptr) + 16);
   // CHECK: ld.global.ca.v4.u16
-  volatile ushort4 v_17 = __ldca(((const ushort4 *)ptr) + 17);
+  __ldca(((const ushort4 *)ptr) + 17);
   // CHECK: ld.global.ca.v2.u32
-  volatile uint2 v_18 = __ldca(((const uint2 *)ptr) + 18);
+  __ldca(((const uint2 *)ptr) + 18);
   // CHECK: ld.global.ca.v4.u32
-  volatile uint4 v_19 = __ldca(((const uint4 *)ptr) + 19);
+  __ldca(((const uint4 *)ptr) + 19);
   // CHECK: ld.global.ca.v2.u64
-  volatile ulonglong2 v_20 = __ldca(((const ulonglong2 *)ptr) + 20);
+  __ldca(((const ulonglong2 *)ptr) + 20);
   // CHECK: ld.global.ca.v2.f32
-  volatile float2 v_21 = __ldca(((const float2 *)ptr) + 21);
+  __ldca(((const float2 *)ptr) + 21);
   // CHECK: ld.global.ca.v4.f32
-  volatile float4 v_22 = __ldca(((const float4 *)ptr) + 22);
+  __ldca(((const float4 *)ptr) + 22);
   // CHECK: ld.global.ca.v2.f64
-  volatile double2 v_23 = __ldca(((const double2 *)ptr) + 23);
+  __ldca(((const double2 *)ptr) + 23);
 }
 __device__ void test_loads_lu(void *ptr) {
   // CHECK-LABEL: .func _Z13test_loads_luPv
