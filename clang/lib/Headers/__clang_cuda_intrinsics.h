@@ -604,20 +604,18 @@ inline __device__ unsigned __funnelshift_rc(unsigned low32, unsigned high32,
   __INTRINSIC_LOAD_LONG(__Mode)                                                \
   __INTRINSIC_LOAD_ULONG(__Mode)
 
-__INTRINSIC_LOAD_FAMILY(cg, )
-__INTRINSIC_LOAD_FAMILY(ca, )
-
+__INTRINSIC_LOAD_FAMILY(ca, /* no clobber */)
+__INTRINSIC_LOAD_FAMILY(cg, /* no clobber */)
+__INTRINSIC_LOAD_FAMILY(cs, /* no clobber */)
 __INTRINSIC_LOAD_FAMILY(cv, : "memory")
 __INTRINSIC_LOAD_FAMILY(lu, : "memory")
-
-__INTRINSIC_LOAD_FAMILY(cs, )
 
 #pragma pop_macro("__INTRINSIC_LOAD")
 #pragma pop_macro("__INTRINSIC_LOAD2")
 #pragma pop_macro("__INTRINSIC_LOAD4")
-#pragma pop_macro("__INTRINSIC_LOAD_FAMILY")
 #pragma pop_macro("__INTRINSIC_LOAD_LONG")
 #pragma pop_macro("__INTRINSIC_LOAD_ULONG")
+#pragma pop_macro("__INTRINSIC_LOAD_FAMILY")
 
 #pragma push_macro("__INTRINSIC_STORE")
 #define __INTRINSIC_STORE(__FnName, __AsmOp, __DeclType, __TmpType, __AsmType) \
@@ -734,17 +732,17 @@ __INTRINSIC_LOAD_FAMILY(cs, )
   __INTRINSIC_STORE_LONG(__Mode)                                               \
   __INTRINSIC_STORE_ULONG(__Mode)
 
-__INTRINSIC_STORE_FAMILY(wt)
-__INTRINSIC_STORE_FAMILY(wb)
 __INTRINSIC_STORE_FAMILY(cg)
 __INTRINSIC_STORE_FAMILY(cs)
+__INTRINSIC_STORE_FAMILY(wb)
+__INTRINSIC_STORE_FAMILY(wt)
 
 #pragma pop_macro("__INTRINSIC_STORE")
 #pragma pop_macro("__INTRINSIC_STORE2")
 #pragma pop_macro("__INTRINSIC_STORE4")
-#pragma pop_macro("__INTRINSIC_STORE_FAMILY")
 #pragma pop_macro("__INTRINSIC_STORE_LONG")
 #pragma pop_macro("__INTRINSIC_STORE_ULONG")
+#pragma pop_macro("__INTRINSIC_STORE_FAMILY")
 
 #endif // defined(__cplusplus) && (__cplusplus >= 201103L)
 #endif // !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 320
