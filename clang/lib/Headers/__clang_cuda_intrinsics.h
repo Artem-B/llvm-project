@@ -528,19 +528,19 @@ inline __device__ unsigned __funnelshift_rc(unsigned low32, unsigned high32,
   inline __device__ long __ld##__Mode(const long *__ptr) {                     \
     if (__SIZEOF_LONG__ == __SIZEOF_LONG_LONG__) {                             \
       return (long)__ld##__Mode((const long long *)__ptr);                     \
-    } else {                                                                  \
-      return (long)__ld##__Mode((const int *)__ptr);                             \
-    }                                                                         \
+    } else {                                                                   \
+      return (long)__ld##__Mode((const int *)__ptr);                           \
+    }                                                                          \
   }
 
 #pragma push_macro("__INTRINSIC_LOAD_ULONG")
-#define __INTRINSIC_LOAD_ULONG(__Mode)                                          \
+#define __INTRINSIC_LOAD_ULONG(__Mode)                                         \
   inline __device__ unsigned long __ld##__Mode(const unsigned long *__ptr) {   \
     if (__SIZEOF_LONG__ == __SIZEOF_LONG_LONG__) {                             \
       return (unsigned long)__ld##__Mode((const unsigned long long *)__ptr);   \
-    } else {                                                                  \
+    } else {                                                                   \
       return (unsigned long)__ld##__Mode((const unsigned int *)__ptr);         \
-    }                                                                         \
+    }                                                                          \
   }
 
 #pragma push_macro("__INTRINSIC_LOAD_FAMILY")
@@ -569,11 +569,11 @@ inline __device__ unsigned __funnelshift_rc(unsigned low32, unsigned high32,
                     "=r", __Clobber)                                           \
   __INTRINSIC_LOAD2(__ld##__Mode, "ld.global." #__Mode ".v2.s64", longlong2,   \
                     longlong2, "=l", __Clobber)                                \
-  __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u8", unsigned char,   \
+  __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u8", unsigned char,    \
                    unsigned int, "=r", __Clobber)                              \
-  __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u16", unsigned short, \
+  __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u16", unsigned short,  \
                    unsigned short, "=h", __Clobber)                            \
-  __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u32", unsigned int,   \
+  __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u32", unsigned int,    \
                    unsigned int, "=r", __Clobber)                              \
   __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".u64",                  \
                    unsigned long long, unsigned long long, "=l", __Clobber)    \
@@ -589,7 +589,7 @@ inline __device__ unsigned __funnelshift_rc(unsigned low32, unsigned high32,
                     uint2, "=r", __Clobber)                                    \
   __INTRINSIC_LOAD4(__ld##__Mode, "ld.global." #__Mode ".v4.u32", uint4,       \
                     uint4, "=r", __Clobber)                                    \
-  __INTRINSIC_LOAD2(__ld##__Mode, "ld.global." #__Mode ".v2.u64", ulonglong2, \
+  __INTRINSIC_LOAD2(__ld##__Mode, "ld.global." #__Mode ".v2.u64", ulonglong2,  \
                     ulonglong2, "=l", __Clobber)                               \
   __INTRINSIC_LOAD(__ld##__Mode, "ld.global." #__Mode ".f32", float, float,    \
                    "=f", __Clobber)                                            \
@@ -604,28 +604,13 @@ inline __device__ unsigned __funnelshift_rc(unsigned low32, unsigned high32,
   __INTRINSIC_LOAD_LONG(__Mode)                                                \
   __INTRINSIC_LOAD_ULONG(__Mode)
 
-
-
-
 __INTRINSIC_LOAD_FAMILY(cg, )
 __INTRINSIC_LOAD_FAMILY(ca, )
-
-
-
-
 
 __INTRINSIC_LOAD_FAMILY(cv, : "memory")
 __INTRINSIC_LOAD_FAMILY(lu, : "memory")
 
-
-
-
-
-
 __INTRINSIC_LOAD_FAMILY(cs, )
-
-
-
 
 #pragma pop_macro("__INTRINSIC_LOAD")
 #pragma pop_macro("__INTRINSIC_LOAD2")
@@ -633,9 +618,6 @@ __INTRINSIC_LOAD_FAMILY(cs, )
 #pragma pop_macro("__INTRINSIC_LOAD_FAMILY")
 #pragma pop_macro("__INTRINSIC_LOAD_LONG")
 #pragma pop_macro("__INTRINSIC_LOAD_ULONG")
-
-
-
 
 #pragma push_macro("__INTRINSIC_STORE")
 #define __INTRINSIC_STORE(__FnName, __AsmOp, __DeclType, __TmpType, __AsmType) \
@@ -673,23 +655,24 @@ __INTRINSIC_LOAD_FAMILY(cs, )
   }
 
 #pragma push_macro("__INTRINSIC_STORE_LONG")
-#define __INTRINSIC_STORE_LONG(__Mode)                                          \
-  inline __device__ void __st##__Mode(long *__ptr, long __value) {              \
+#define __INTRINSIC_STORE_LONG(__Mode)                                         \
+  inline __device__ void __st##__Mode(long *__ptr, long __value) {             \
     if (__SIZEOF_LONG__ == __SIZEOF_LONG_LONG__) {                             \
-      __st##__Mode((long long *)__ptr, (long long)__value);                     \
-    } else {                                                                  \
-      __st##__Mode((int *)__ptr, (int)__value);                                 \
-    }                                                                         \
+      __st##__Mode((long long *)__ptr, (long long)__value);                    \
+    } else {                                                                   \
+      __st##__Mode((int *)__ptr, (int)__value);                                \
+    }                                                                          \
   }
 
 #pragma push_macro("__INTRINSIC_STORE_ULONG")
-#define __INTRINSIC_STORE_ULONG(__Mode)                                          \
-  inline __device__ void __st##__Mode(unsigned long *__ptr, unsigned long __value) { \
+#define __INTRINSIC_STORE_ULONG(__Mode)                                        \
+  inline __device__ void __st##__Mode(unsigned long *__ptr,                    \
+                                      unsigned long __value) {                 \
     if (__SIZEOF_LONG__ == __SIZEOF_LONG_LONG__) {                             \
-      __st##__Mode((unsigned long long *)__ptr, (unsigned long long)__value);   \
-    } else {                                                                  \
-      __st##__Mode((unsigned int *)__ptr, (unsigned int)__value);                 \
-    }                                                                         \
+      __st##__Mode((unsigned long long *)__ptr, (unsigned long long)__value);  \
+    } else {                                                                   \
+      __st##__Mode((unsigned int *)__ptr, (unsigned int)__value);              \
+    }                                                                          \
   }
 
 #pragma push_macro("__INTRINSIC_STORE_FAMILY")
@@ -700,20 +683,20 @@ __INTRINSIC_LOAD_FAMILY(cs, )
   __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".s16", short, short,   \
                     "h")                                                       \
   __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".s32", int, int, "r")  \
-  __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".s64", long long,       \
+  __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".s64", long long,      \
                     long long, "l")                                            \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s8", char2,       \
-                     int2, "r")                                                \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.s8", char4,       \
-                     int4, "r")                                                \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s16", short2,      \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s8", char2, int2, \
+                     "r")                                                      \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.s8", char4, int4, \
+                     "r")                                                      \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s16", short2,     \
                      short2, "h")                                              \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.s16", short4,      \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.s16", short4,     \
                      short4, "h")                                              \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s32", int2,       \
-                     int2, "r")                                                \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.s32", int4,       \
-                     int4, "r")                                                \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s32", int2, int2, \
+                     "r")                                                      \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.s32", int4, int4, \
+                     "r")                                                      \
   __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.s64", longlong2,  \
                      longlong2, "l")                                           \
   __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".u8", unsigned char,   \
@@ -724,41 +707,37 @@ __INTRINSIC_LOAD_FAMILY(cs, )
                     unsigned int, "r")                                         \
   __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".u64",                 \
                     unsigned long long, unsigned long long, "l")               \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u8", uchar2,       \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u8", uchar2,      \
                      uchar2, "r")                                              \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.u8", uchar4,       \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.u8", uchar4,      \
                      uint4, "r")                                               \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u16", ushort2,     \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u16", ushort2,    \
                      ushort2, "h")                                             \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.u16", ushort4,     \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.u16", ushort4,    \
                      ushort4, "h")                                             \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u32", uint2,       \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u32", uint2,      \
                      uint2, "r")                                               \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.u32", uint4,       \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.u32", uint4,      \
                      uint4, "r")                                               \
   __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.u64", ulonglong2, \
                      ulonglong2, "l")                                          \
-  __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".f32", float, float,    \
+  __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".f32", float, float,   \
                     "f")                                                       \
-  __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".f64", double, double,  \
+  __INTRINSIC_STORE(__st##__Mode, "st.global." #__Mode ".f64", double, double, \
                     "d")                                                       \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.f32", float2,      \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.f32", float2,     \
                      float2, "f")                                              \
-  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.f32", float4,      \
+  __INTRINSIC_STORE4(__st##__Mode, "st.global." #__Mode ".v4.f32", float4,     \
                      float4, "f")                                              \
-  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.f64", double2,     \
-                     double2, "d")                                              \
-  __INTRINSIC_STORE_LONG(__Mode)                                                \
+  __INTRINSIC_STORE2(__st##__Mode, "st.global." #__Mode ".v2.f64", double2,    \
+                     double2, "d")                                             \
+  __INTRINSIC_STORE_LONG(__Mode)                                               \
   __INTRINSIC_STORE_ULONG(__Mode)
-
 
 __INTRINSIC_STORE_FAMILY(wt)
 __INTRINSIC_STORE_FAMILY(wb)
 __INTRINSIC_STORE_FAMILY(cg)
 __INTRINSIC_STORE_FAMILY(cs)
-
-
-
 
 #pragma pop_macro("__INTRINSIC_STORE")
 #pragma pop_macro("__INTRINSIC_STORE2")
