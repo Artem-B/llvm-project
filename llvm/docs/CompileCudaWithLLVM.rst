@@ -87,9 +87,12 @@ Note that it has to be `clang++` as CUDA headers rely on C++ features.
   ``--offload-arch=sm_80``.
 
   Note: You cannot pass ``compute_XX`` as an argument to ``--offload-arch``;
-  only ``sm_XX`` is currently supported.  However, clang always includes PTX in
-  its binaries, so e.g. a binary compiled with ``--offload-arch=sm_80`` would be
-  forwards-compatible with e.g. ``sm_86`` GPUs.
+  only ``sm_XX`` is currently supported.
+
+  CUDA compilation no longer includes PTX by default. If you want to enable it,
+  use ``--cuda-include-ptx=all|sm_*``. For example, a binary compiled with
+  ``--offload-arch=sm_80`` would need ``--cuda-include-ptx=sm_80`` (or ``all``)
+  to be forwards-compatible with e.g. ``sm_86`` GPUs.
 
   You can pass ``--offload-arch`` multiple times to compile for multiple archs.
 
@@ -272,8 +275,8 @@ compilation steps.
     * Invoke ``ptxas`` to generate a SASS file, ``S_arch``.  Note that, unlike
       nvcc, clang always generates SASS code.
 
-  * Invoke ``fatbin`` to combine all ``P_arch`` and ``S_arch`` files into a
-    single fat binary file, ``F``.
+  * Invoke ``fatbin`` to combine all ``S_arch`` files (and ``P_arch`` files if
+    PTX inclusion was requested) into a single fat binary file, ``F``.
 
   * Compile ``H`` using clang.  ``__device__`` code is parsed and must be
     semantically correct, even though we're not generating code for the device
