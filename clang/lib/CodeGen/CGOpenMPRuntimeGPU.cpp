@@ -2309,6 +2309,9 @@ void CGOpenMPRuntimeGPU::processRequiresDirective(const OMPRequiresDecl *D) {
       case OffloadArch::SM_103:
       case OffloadArch::SM_103a:
       case OffloadArch::SM_103f:
+      case OffloadArch::SM_107:
+      case OffloadArch::SM_107a:
+      case OffloadArch::SM_107f:
       case OffloadArch::SM_110:
       case OffloadArch::SM_110a:
       case OffloadArch::SM_110f:

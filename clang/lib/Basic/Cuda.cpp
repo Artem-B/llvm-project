@@ -48,6 +48,8 @@ static const CudaVersionMapEntry CudaNameVersionMap[] = {
     CUDA_ENTRY(13, 0),
     CUDA_ENTRY(13, 1),
     CUDA_ENTRY(13, 2),
+    CUDA_ENTRY(13, 3),
+    CUDA_ENTRY(13, 4),
     {"", CudaVersion::NEW, llvm::VersionTuple(std::numeric_limits<int>::max())},
     {"unknown", CudaVersion::UNKNOWN, {}} // End of list tombstone.
 };
@@ -138,6 +140,10 @@ CudaVersion MinVersionForOffloadArch(OffloadArch A) {
   case OffloadArch::SM_110a:
   case OffloadArch::SM_110f:
     return CudaVersion::CUDA_130;
+  case OffloadArch::SM_107:
+  case OffloadArch::SM_107a:
+  case OffloadArch::SM_107f:
+    return CudaVersion::CUDA_134;
   default:
     llvm_unreachable("invalid enum");
   }
@@ -240,6 +246,10 @@ unsigned CudaArchToID(OffloadArch Arch) {
   case OffloadArch::SM_103a:
   case OffloadArch::SM_103f:
     return 1030;
+  case OffloadArch::SM_107:
+  case OffloadArch::SM_107a:
+  case OffloadArch::SM_107f:
+    return 1070;
   case OffloadArch::SM_110:
   case OffloadArch::SM_110a:
   case OffloadArch::SM_110f:
@@ -264,6 +274,7 @@ bool IsNVIDIAAcceleratedOffloadArch(OffloadArch Arch) {
   case OffloadArch::SM_100a:
   case OffloadArch::SM_101a:
   case OffloadArch::SM_103a:
+  case OffloadArch::SM_107a:
   case OffloadArch::SM_110a:
   case OffloadArch::SM_120a:
   case OffloadArch::SM_121a:
@@ -280,6 +291,7 @@ bool IsNVIDIAFamilySpecificOffloadArch(OffloadArch Arch) {
   case OffloadArch::SM_100f:
   case OffloadArch::SM_101f:
   case OffloadArch::SM_103f:
+  case OffloadArch::SM_107f:
   case OffloadArch::SM_110f:
   case OffloadArch::SM_120f:
   case OffloadArch::SM_121f:
